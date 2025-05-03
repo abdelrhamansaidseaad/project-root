@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سحب من البطاقة</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>سحب من البطاقة</h1>
+        <a href="/dashboard" class="back-btn">العودة إلى لوحة التحكم</a>
+    </header>
+    <div class="container">
+        <form id="withdrawForm">
+            <div class="form-group">
+                <label for="cardNumber">رقم البطاقة</label>
+                <input type="text" id="cardNumber" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">المبلغ</label>
+                <input type="number" id="amount" min="0.01" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="branchId">رقم الفرع</label>
+                <input type="text" id="branchId" required>
+            </div>
+            <button type="submit">تنفيذ السحب</button>
+        </form>
+        <div id="withdrawResult" class="result-message"></div>
+    </div>
+    <script src="/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>لوحة التحكم</h1>
+        <button id="logoutBtn">تسجيل الخروج</button>
+    </header>
+    <div class="container">
+        <div class="welcome-message">
+            <h2>مرحبًا، <span id="employeeName"></span></h2>
+            <p>رقم الموظف: <span id="employeeId"></span></p>
+        </div>
+        
+        <div class="actions">
+            <a href="/add-card" class="btn">إضافة بطاقة جديدة</a>
+            <a href="/withdraw" class="btn">سحب من البطاقة</a>
+            <a href="/employees" class="btn">عرض الموظفين</a>
+        </div>
+        
+        <div class="cards-section">
+            <h3>البطاقات المتاحة</h3>
+            <div id="cardsList" class="cards-list">
+                <!-- سيتم ملء هذا القسم بالبطاقات عبر JavaScript -->
+            </div>
+        </div>
+    </div>
+    <script src="/js/script.js"></script>
+</body>
+</html>
