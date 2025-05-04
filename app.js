@@ -21,6 +21,12 @@ const corsOptions = {
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+// تجاهل طلبات favicon
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+app.get('/favicon.png', (req, res) => res.status(204).end());
+app.get('/favicon.ico', (req, res) => {
+    res.redirect('https://your-app-name.vercel.app/images/favicon.ico');
+  });
 
 // Connect to MongoDB Atlas
 mongoose.connect(process.env.MONGODB_URI)
