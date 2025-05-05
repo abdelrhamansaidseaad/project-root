@@ -7,31 +7,19 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-//
-const corsOptions = {
-    origin: [
-      'https://your-app-name.vercel.app',
-      'http://localhost:3000'
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  };
-  app.use(cors(corsOptions));
+
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-// تجاهل طلبات favicon
-app.get('/favicon.ico', (req, res) => res.status(204).end());
-app.get('/favicon.png', (req, res) => res.status(204).end());
-app.get('/favicon.ico', (req, res) => {
-    res.redirect('https://your-app-name.vercel.app/images/favicon.ico');
-  });
 
 // Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch(err => console.error('Could not connect to MongoDB Atlas', err));
+// mongoose.connect(process.env.MONGODB_URI)
+//   .then(() => console.log('Connected to MongoDB Atlas'))
+//   .catch(err => console.error('Could not connect to MongoDB Atlas', err));
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/card-system')
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Schemas
 const employeeSchema = new mongoose.Schema({
@@ -78,42 +66,34 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 // Employee Registration
 app.post('/api/register', async (req, res) => {
     try {
-      console.log('Request body:', req.body); // للتتبع
-      const { employeeId, name, email, password } = req.body;
-      
-      console.log('Checking existing employee...');
-      const existingEmployee = await Employee.findOne({ $or: [{ employeeId }, { email }] });
-      
-      if (existingEmployee) {
-        console.log('Employee already exists');
-        return res.status(400).json({ message: 'Employee already exists' });
-      }
-      
-      console.log('Hashing password...');
-      const hashedPassword = await bcrypt.hash(password, 10);
-      
-      console.log('Creating new employee...');
-      const employee = new Employee({
-        employeeId,
-        name,
-        email,
-        password: hashedPassword,
-        permissions: ['processWithdrawal']
-      });
-      
-      await employee.save();
-      console.log('Employee saved successfully:', employee);
-      
-      res.status(201).json({ message: 'Employee registered successfully' });
+        const { employeeId, name, email, password } = req.body;
+        
+        // Check if employee already exists
+        const existingEmployee = await Employee.findOne({ $or: [{ employeeId }, { email }] });
+        if (existingEmployee) {
+            return res.status(400).json({ message: 'Employee already exists' });
+        }
+        
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        // Create new employee
+        const employee = new Employee({
+            employeeId,
+            name,
+            email,
+            password: hashedPassword,
+            permissions: ['processWithdrawal'] // Default permission
+        });
+        
+        await employee.save();
+        
+        res.status(201).json({ message: 'Employee registered successfully' });
     } catch (error) {
-      console.error('Registration error:', error);
-      res.status(500).json({ 
-        message: 'Error registering employee', 
-        error: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
-      });
+        res.status(500).json({ message: 'Error registering employee', error: error.message });
     }
-  });
+});
+
 // Employee Login
 app.post('/api/login', async (req, res) => {
     try {
@@ -311,12 +291,13 @@ app.get('/employees', (req, res) => {
 
 // Handle 404 for undefined routes
 app.use((req, res) => {
-    res.status(404).json({ error: 'Not Found', message: 'الصفحة غير موجودة' });
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
 });
 
+// Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'Server Error', message: 'حدث خطأ في الخادم' });
+    res.status(500).sendFile(path.join(__dirname, 'views', '500.html'));
 });
 
 // Start server
