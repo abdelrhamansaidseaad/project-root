@@ -290,9 +290,13 @@ app.get('/employees', (req, res) => {
 });
 
 // Handle 404 for undefined routes
+// app.use((req, res) => {
+//     res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+// });
+// معالجة المسارات غير الموجودة (404)
 app.use((req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-});
+  });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
